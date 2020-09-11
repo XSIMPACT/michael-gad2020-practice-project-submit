@@ -1,0 +1,357 @@
+
+                2 LABS TRANSLATIONS
+
+
+First LAB TRANSLATION
+
+
+
+ 1   GOOGLE CLOUD FUNDAMENTALS= CORE INFRASTRUCTURE
+ 
+ 
+    MODULE:  Virtual Machines In The Cloud
+    
+    LAB:     Getting Started with Compute Engine
+
+
+ Objectives:
+
+    In this lab, you will learn how to perform the following tasks:
+
+        . Create a Compute Engine virtual machine using the Google Cloud Platform (GCP) Console.
+
+        . Create a Compute Engine virtual machine using the gcloud command-line interface.
+
+     . Connect between the two instances.
+
+STEPS:
+      
+      After Signing in to the console...
+       Create a virtual machine using the GCP Console 
+       To Create an Instance with Name my-vm-1
+       with Region and zone as assigned by qwiklabs
+       Machine type, set at default.
+       For Boot disk,  Debian GNU/Linux 9 (stretch)
+       for Identity and API access unmodified.
+       For Firewall, Allow HTTP traffic.
+
+COMMAND LINE:
+
+ 
+1          gcloud compute instances create "my-vm-1" --machine-type "n1-standard-1" --image-project "debian-cloud" 
+            --image "debian-9-stretch-v20190213" --subnet "default" --tag-http
+        
+            gcloud compute firewall rules create allow-http "--action=ALLOW" "--direction=INGRESS"
+             "--rules=tcp:80" "--target-tags=http"
+
+
+ 2  Create a virtual machine using the gcloud command line:
+    To display a list of all the zones in the region to which Qwiklabs assigned you,
+
+             
+            gcloud compute zones list | grep us-central1
+
+   
+
+   Choose a zone from that list other than the zone to which Qwiklabs assigned you.
+   set your default zone to te one you chose;
+   
+             
+
+             gcloud config set compute/zone us-central1-b
+
+  
+
+To create a VM instance called my-vm-2 in that zone, 
+  execute this command:
+
+            
+
+              gcloud compute instances create "my-vm-2" \
+               --machine-type "n1-standard-1" \
+               --image-project "debian-cloud" \
+               --image "debian-9-stretch-v20190213" \
+               --subnet "default"
+     
+ 3  Connect between VM instances
+
+   Use the ping command to confirm that my-vm-2 can reach my-vm-1 over the network:
+   Connect to "my-vm-2"
+
+ 
+  COMMAND LINE:             
+ 
+               
+
+                    gcloud compute ssh my-vm-2
+  
+          
+ 4 To Ping my-vm-1 from my-vm-2 
+         
+  COMMAND LINE:
+                
+
+
+                        ping -c 4 my-vm-1 
+ 
+ use the ssh command to open the the command prompt from my-vm-1 to my-vn-2
+
+ 
+
+ COMMAND LINE:
+
+                       ssh my-vm-1
+
+ 5 At the command prompt on my-vm-1, install the Nginx web server:
+
+ 
+  COMMAND LINE:
+
+                      sudo apt-get install nginx-light -y
+
+ 6 Use the nano text editor to add a custom message to the home page of the web server:
+
+
+   COMMAND LINE:
+
+                      sudo nano /var/www/html/index.nginx-debian.html
+
+
+
+ 7  Use the arrow keys to move the cursor to the line just below the h1 header. 
+
+   Add text like this, and replace YOUR_NAME with your name:
+
+
+ COMMAND LINE:
+
+
+                       Hi from Micheal
+
+ 
+
+8   Save and exit the editor 
+
+
+COMMAND LINE:
+
+
+                     CTRL + O ENTER      CTRL+ X
+
+
+ Confirm that the web server is serving your new page. 
+ At the command prompt on my-vm-1, execute this command:
+
+
+COMMAND LINE:
+
+
+                     curl http://localhost/
+
+ result
+
+
+
+  The response will be the HTML source of the web server's home page, 
+  including your line of custom text.
+
+ 
+
+ 9  exit the command prompt on my-vm-1, execute this command:
+
+
+  COMMAND LINE:  
+
+                       exit
+
+ 
+
+ You will return to the command prompt on my-vm-2
+
+
+ 10   To confirm that my-vm-2 can reach the web server on my-vm-1, 
+      at the command prompt on my-vm-2, execute this command:
+ 
+
+ 
+ COMMAND LINE:
+
+
+
+                      curl http://my-vm-1/
+
+ result
+
+  
+  The response again will be the HTML source of the web server's home page, 
+  including your line of custom text. 
+
+
+
+ 11  Copy the External IP address for my-vm-1 and paste it into the address 
+     bar of a new browser tab.    
+
+
+ COMMAND LINE:
+
+                    
+                       gcloud compute instances list --zone us-central-1a
+
+  
+
+ result:   
+
+  
+   You will see your web server's home page, including your custom text.
+
+
+  THE END
+
+
+
+
+
+  2  Second LAB TRANSLATION
+
+                  ESSENTIAL GOOGLE CLOUD INFRASTRUCTURE: Foundation     
+  
+   Module:        Vitual Machine 
+      
+   LAB:           Creating Virtual Machines
+
+
+ Objectives
+
+ In this lab, you explore the available options for VMs and see the differences between locations.
+
+ In this lab, you learn how to perform the following tasks:
+
+                 .  Create several standard VMs
+
+                 .  Create advanced VMs
+
+ STEPS:
+ 
+ 1   Create a utility virtual machine
+  
+
+    COMMAND LINE:
+
+
+                         gcloud beta compute instances create my-utility-vm-1 \
+                          --zone=us-central1-c --machine-type=n1-standard-1 \
+                          --subnet=default --no-address \
+                          --image=debian-10-buster-v20200910 --image-project=debian-cloud \
+                          --boot-disk-size=10GB \
+                          --boot-disk-type=pd-standard \
+                          --boot-disk-device-name=my-utility-vm-1 
+
+ 2   Explore the VM details
+
+   COMMAND LINE:
+  
+                        gcloud compute instances describe my-utility-vm-1
+
+
+ 3  Create a Windows virtual machine
+
+
+   COMMAND LINE         
+  
+
+
+                         gcloud beta compute instances create my-windows-vm \
+                             --zone=europe-west2-a \
+                             --machine-type=n1-standard-2 --subnet=default  \
+                             --tags=http-server,https-server \
+                             --image=windows-server-2016-dc-core-v20200908 \
+                             --image-project=windows-cloud --boot-disk-size=100GB \
+                             --boot-disk-type=pd-ssd --boot-disk-device-name=my-windows-vm 
+
+
+    To allow HTTP And HTTPS Traffiic:
+
+    
+                         gcloud compute  firewall-rules create default-allow-http \
+                              --direction=INGRESS --priority=1000 \
+                              --network=default --action=ALLOW --rules=tcp:80 \
+                              --source-ranges=0.0.0.0/0 --target-tags=http-serve
+
+
+ 4  Create a custom virtual machine
+
+
+   COMMAND LINE:
+
+
+
+                         gcloud beta compute instances create my-custom-vm \
+                              --zone=us-west1-b --machine-type=e2-custom-6-32768 \
+                             --subnet=default --image=debian-10-buster-v20200910 \
+                              --image-project=debian-cloud --boot-disk-size=10GB \
+                              --boot-disk-type=pd-standard \
+                              --boot-disk-device-name=my-custom-vm  
+
+ 
+ 5  Connect via SSH to your custom VM
+
+      SSH into the custom VM you just created,  
+  
+
+
+   COMMAND LINE:
+
+
+                           gcloud compute ssh  my-custom-vm
+                      
+ 
+
+ 6  To see information about unused and used memory and swap space on your custom VM, 
+    run the following 
+
+
+ 
+  COMMAND LINE:   
+
+                             free
+
+
+ 7   To see details about the RAM installed on your VM, run the following
+
+
+   COMMAND LINE:
+   
+
+                             sudo dmidecode -t 17                            
+
+
+ 8  To verify the number of processors, run the following 
+
+     COMMAND LINE:
+                              
+                             nproc
+
+ 9  To see details about the CPUs installed on your VM, run the following
+
+
+    COMMAND LINE:
+
+
+                              lscpu
+
+ 10  To exit the SSH terminal, run the following 
+
+
+      COMMAND LINE:
+
+                               exit
+
+
+    
+
+
+ 
+
+   
+
+        
